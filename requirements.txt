@@ -1,0 +1,7 @@
+# PDF text + figure extraction (figure extraction requires PyMuPDF)
+pymupdf>=1.23
+# Fallback text-extraction engine when PyMuPDF is unavailable
+pypdf>=3.0
+
+# Note: generate_reveal_deck.py has NO runtime dependencies.
+# It loads reveal.js from a CDN, so internet access is only needed when viewing the deck.

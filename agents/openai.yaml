@@ -1,0 +1,15 @@
+interface:
+  display_name: Paper PDF Brief
+  short_description: Create faithful paper briefs and visual HTML paper PPTs from
+    research PDFs.
+  icon: assets/icon.svg
+  accent_color: '#0B5EA8'
+  icon_small: assets/icon.svg
+  icon_large: assets/icon.svg
+policy:
+  products:
+  - chatgpt
+  - codex
+  - api
+  - atlas
+  allow_implicit_invocation: true

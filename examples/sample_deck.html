@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Decoupling Geometry and Appearance</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5/dist/reveal.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5/dist/theme/white.css" id="theme">
+  <style>
+    :root {
+      --navy:#073763; --blue:#0b5ea8; --sky:#dceeff; --ice:#f5faff;
+      --text:#102033; --muted:#617386; --line:#c6def7; --gold:#c49035;
+      --r-main-font-size: 30px;
+    }
+    body { background: linear-gradient(135deg,#f9fcff 0%,#e9f5ff 100%); }
+    .reveal { font-family: "Times New Roman", Times, serif; color: var(--text); }
+    .reveal .slides section { height: 100%; box-sizing: border-box; padding: 48px 64px; text-align: left; }
+    .reveal h1, .reveal h2 { font-family: "Times New Roman", Times, serif; color: var(--navy); letter-spacing: -0.025em; text-transform: none; }
+    .reveal h2 { font-size: 1.34em; margin: 0 0 0.55em; border-bottom: 3px solid var(--line); padding-bottom: 0.25em; }
+    .reveal h3 { font-family: "Comic Sans MS", "Comic Sans", cursive; color: var(--blue); font-size: 0.82em; margin: 0.45em 0 0.2em; text-transform: none; }
+    .reveal p, .reveal li { font-size: 0.72em; line-height: 1.28; color: var(--text); }
+    .reveal ul, .reveal ol { width: 88%; }
+    .reveal strong { color: var(--blue); font-weight: 900; }
+    .reveal code { font-size: 0.82em; color: var(--navy); }
+    .reveal blockquote { width: 86%; font-size: 0.72em; padding: 0.55em 0.8em; color: var(--navy); border-left: 8px solid var(--blue); background: white; box-shadow: 0 12px 34px rgba(14,76,129,.10); }
+    .visual-card { width: 86%; margin: 0.7em auto 0; padding: 0.75em 0.85em; border: 2px dashed var(--blue); border-radius: 18px; text-align: left; background: white; box-shadow: 0 12px 34px rgba(14,76,129,.10); }
+    .visual-label { font-family: "Comic Sans MS", "Comic Sans", cursive; font-size: 0.48em; text-transform: uppercase; letter-spacing: 0.08em; color: var(--blue); margin-bottom: 0.3em; }
+    .visual-text { font-family: "Comic Sans MS", "Comic Sans", cursive; font-size: 0.62em; line-height: 1.25; color: var(--navy); }
+    .image-card { margin: 0.55em auto 0; width: 90%; text-align: center; background: white; border: 1px solid var(--line); border-radius: 22px; padding: 0.45em; box-shadow: 0 12px 34px rgba(14,76,129,.11); }
+    .image-card img { max-width: 100%; max-height: 390px; object-fit: contain; border-radius: 12px; }
+    .image-card figcaption { font-family: "Comic Sans MS", "Comic Sans", cursive; font-size: 0.42em; color: var(--muted); margin-top: 0.25em; }
+    .table-wrap { width: 92%; margin: 0.7em auto 0; }
+    table { width: 100%; border-collapse: collapse; background: white; border-radius: 16px; overflow: hidden; box-shadow: 0 12px 34px rgba(14,76,129,.10); }
+    th { background: var(--navy); color: white; font-family: "Comic Sans MS", "Comic Sans", cursive; font-size: 0.55em; padding: 0.55em; }
+    td { font-size: 0.56em; padding: 0.55em; border-bottom: 1px solid var(--line); text-align: center; }
+    td:first-child { text-align: left; font-weight: 800; color: var(--navy); }
+    .footer { position: fixed; left: 24px; bottom: 14px; font-family: "Comic Sans MS", "Comic Sans", cursive; font-size: 13px; color: var(--muted); z-index: 20; }
+    </style>
+</head>
+<body>
+  <div class="reveal">
+    <div class="slides">
+<section>
+  <h2>Overview</h2>
+  <blockquote>NOTE: This is a fictional, illustrative example used only to demonstrate the deck</blockquote>
+<blockquote>format and the generator script. It does not summarize any real paper. When the</blockquote>
+<blockquote>skill runs for real, every slide is grounded in the actual source PDF.</blockquote>
+</section>
+<section>
+  <h2>Title + One-line Takeaway</h2>
+  <p><strong>Title:</strong> Decoupling Geometry and Appearance for Robust Cross-Domain Recognition</p>
+<p><strong>One-line Takeaway:</strong> We solve <em>cross-domain generalization failure</em> by <em>separating transferable geometric structure from domain-specific appearance</em>, achieving <em>+8.4 mIoU over the strongest baseline on unseen domains</em>.</p>
+<div class="visual-card"><div class="visual-label">Visual</div><div class="visual-text">Teaser: same object, three domains (sim, day, night) — geometry stays stable while appearance shifts dramatically.</div></div>
+</section>
+<section>
+  <h2>Motivation / Problem</h2>
+  <ul><li><strong>Why worth doing:</strong> recognition models must work in deployment domains never seen during training.</li><li><strong>Pain point:</strong> current methods entangle geometry and appearance, so a change in lighting or style collapses accuracy.</li><li><strong>Why serious:</strong> in real deployment, domain shift is the norm, not the exception — retraining per domain is costly.</li><li><strong>Failure case:</strong> a model trained on daytime imagery misclassifies the same scene at night despite identical geometry.</li></ul>
+<div class="visual-card"><div class="visual-label">Visual</div><div class="visual-text">Failure case: prediction map degrades from clean (day) to fragmented (night).</div></div>
+</section>
+<section>
+  <h2>Key Insight</h2>
+  <ul><li><strong>Observation:</strong> geometry transfers across domains; appearance does not.</li><li><strong>Insight:</strong> if the two are modeled separately, the transferable part can be reused while the domain-specific part is re-estimated cheaply.</li><li><strong>Proposed direction:</strong> factor the representation into a geometry stream and an appearance stream with a consistency constraint.</li><li><strong>Message:</strong> decouple what transfers from what does not.</li></ul>
+<div class="visual-card"><div class="visual-label">Visual</div><div class="visual-text">Insight diagram: entangled features -&gt; split into [geometry | appearance] -&gt; robust transfer.</div></div>
+</section>
+<section>
+  <h2>Method Overview</h2>
+  <ul><li><strong>Input:</strong> a single RGB image.</li><li><strong>Core module 1 — Geometry encoder:</strong> extracts domain-invariant structural features.</li><li><strong>Core module 2 — Appearance adapter:</strong> lightweight, re-estimated per target domain.</li><li><strong>Output / loss:</strong> segmentation prediction supervised by a cross-domain consistency objective.</li></ul>
+<h3>Key formula</h3>
+<p><code>L = L_task + λ · L_consistency(G(x_s), G(x_t))</code></p>
+<p>Explain in one sentence: the consistency term encourages the geometry encoder <code>G</code> to produce matching structure across source and target domains.</p>
+</section>
+<section>
+  <h2>Results + Takeaway</h2>
+  <ul><li><strong>Setup:</strong> trained on Sim, evaluated on Day / Night / Rain unseen domains.</li><li><strong>Main result:</strong> +8.4 mIoU over the strongest prior method on the hardest (Night) split.</li><li><strong>Ablation:</strong> removing the consistency loss drops gains by ~5 mIoU, supporting the decoupling insight.</li><li><strong>Limitation:</strong> appearance adapter still needs a small unlabeled target set.</li><li><strong>Final takeaway:</strong> separating geometry from appearance is a simple, strong recipe for cross-domain robustness.</li></ul>
+<div class="table-wrap"><table><tr><th>Setting</th><th>Method</th><th>mIoU</th><th>Takeaway</th></tr><tr><td>Sim → Night</td><td>Baseline</td><td>41.2</td><td>entangled features fail</td></tr><tr><td>Sim → Night</td><td>Ours</td><td>49.6</td><td>+8.4 from decoupling</td></tr><tr><td>Sim → Night</td><td>Ours (no consistency)</td><td>44.5</td><td>ablation confirms the insight</td></tr></table></div>
+</section>
+    </div>
+  </div>
+  <div class="footer">Generated with reveal.js</div>
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js@5/dist/reveal.js"></script>
+  <script>
+    Reveal.initialize({
+      hash: true,
+      slideNumber: true,
+      controls: true,
+      progress: true,
+      center: true,
+      transition: 'fade',
+      width: 1280,
+      height: 720,
+      margin: 0.04
+    });
+  </script>
+</body>
+</html>
