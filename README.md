@@ -43,6 +43,67 @@ The skill triggers automatically when you ask to read, summarize, explain, revie
 
 > **Privacy:** the helper scripts run locally — your PDF is parsed on your machine and is not uploaded anywhere. The only external request is the generated deck loading reveal.js from a CDN, so internet access is needed when *viewing* the slides, not when creating them.
 
+## Installation
+
+This project follows the **Agent Skills** format: a folder containing a `SKILL.md` with `name` + `description` frontmatter. Install it by placing that folder where your assistant discovers skills. The skill name is **`paper-pdf-brief`**, so name the installed folder `paper-pdf-brief`.
+
+First, get the files:
+
+```bash
+git clone https://github.com/Jason-Mar1/paper2ppt.git
+```
+
+### Option A — Claude Code
+
+Copy the repo into a skills directory. Claude Code picks it up live (no restart needed).
+
+- **User / global** (available in every project): `~/.claude/skills/paper-pdf-brief/`
+- **Project-scoped** (shared with a repo): `.claude/skills/paper-pdf-brief/`
+
+macOS / Linux:
+
+```bash
+mkdir -p ~/.claude/skills/paper-pdf-brief
+cp -r paper2ppt/* ~/.claude/skills/paper-pdf-brief/
+```
+
+Windows (cmd):
+
+```cmd
+mkdir "%USERPROFILE%\.claude\skills\paper-pdf-brief"
+xcopy /E /I paper2ppt "%USERPROFILE%\.claude\skills\paper-pdf-brief"
+```
+
+Verify by asking Claude to "turn a paper PDF into slides" — it should invoke the `paper-pdf-brief` skill. Make sure `SKILL.md` sits at the root of the installed folder.
+
+### Option B — Claude.ai / Claude Desktop
+
+1. Zip the repository contents so that `SKILL.md` is at the top level of the archive.
+2. Enable **Skills** in Settings → Capabilities (and code execution, if prompted).
+3. Upload the zip under the Skills section. Teams can upload it under Organization settings → Skills to share it across the workspace.
+
+### Option C — Codex
+
+The interface metadata in [`agents/openai.yaml`](agents/openai.yaml) targets ChatGPT, Codex, the API, and Atlas. For Codex, place the folder in a skills directory:
+
+- **User**: `~/.codex/skills/paper-pdf-brief/`
+- **Admin / managed**: `/etc/codex/skills/paper-pdf-brief/`
+
+```bash
+mkdir -p ~/.codex/skills/paper-pdf-brief
+cp -r paper2ppt/* ~/.codex/skills/paper-pdf-brief/
+```
+
+### Install the Python dependencies
+
+The helper scripts (PDF text/figure extraction) need a couple of packages. Run this once in the installed skill folder:
+
+```bash
+pip install -r requirements.txt
+```
+
+`generate_reveal_deck.py` itself has no third-party dependencies.
+
 ## Showcase
 
 <!-- Replace this placeholder with a real screenshot of a generated deck, e.g. assets/demo-deck.png -->
@@ -103,13 +164,7 @@ pip install -r requirements.txt
 
 > `generate_reveal_deck.py` itself needs no third-party packages; the dependencies above are only for the PDF text/figure extraction scripts.
 
-### Clone
-
-```bash
-git clone https://github.com/Jason-Mar1/paper2ppt.git
-cd paper2ppt
-pip install -r requirements.txt
-```
+> To install the skill into Claude Code, Claude.ai, or Codex, see [Installation](#installation) above.
 
 ## Quick start
 
